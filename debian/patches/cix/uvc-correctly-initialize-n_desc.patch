@@ -1,0 +1,21 @@
+--- a/src/drivers/usb/gadget/function/f_uvc.c
++++ b/src/drivers/usb/gadget/function/f_uvc.c
+@@ -560,6 +560,18 @@
+ 	bytes = uvc_iad.bLength + uvc_control_intf.bLength
+ 	      + uvc_streaming_intf_alt0.bLength;
+ 
++	n_desc = 3;
++	if (uvc->enable_interrupt_ep) {
++	       bytes += uvc_interrupt_ep.bLength + uvc_interrupt_cs_ep.bLength;
++	       n_desc += 2;
++
++	       if (speed == USB_SPEED_SUPER ||
++		   speed == USB_SPEED_SUPER_PLUS) {
++		       bytes += uvc_ss_interrupt_comp.bLength;
++		       n_desc += 1;
++	       }
++	}
++
+ 	for (src = (const struct usb_descriptor_header **)uvc_control_desc;
+ 	     *src; ++src) {
+ 		control_size += (*src)->bLength;
